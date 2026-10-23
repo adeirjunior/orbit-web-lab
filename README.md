@@ -1,7 +1,7 @@
 # Orbit — laboratório web
 
-**Site:** https://adeirjunior.github.io/orbit-web-lab/  
-**Repositório:** https://github.com/adeirjunior/orbit-web-lab
+**Endereço previsto após publicação:** https://adeirjunior.github.io/orbit-web-lab/  
+**Repositório previsto:** https://github.com/adeirjunior/orbit-web-lab
 
 Site de teste em **SvelteKit 2 + Svelte 5 (runes) + TypeScript + Vite + PWA**. A página inicial exibe `pagina inicial` e um menu vertical flutuante à direita. Os botões são círculos com ícones e se expandem ao passar o mouse ou receber foco pelo teclado. No toque, o botão executa o teste diretamente.
 
