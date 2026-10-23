@@ -2,12 +2,13 @@
   import { onMount } from 'svelte';
   import { base } from '$app/paths';
   import { fly } from 'svelte/transition';
-  import Icon, { type IconName } from '$lib/Icon.svelte';
+  import Icon from '$lib/Icon.svelte';
+  import TestList from '$lib/TestList.svelte';
+  import { actions, type ActionId } from '$lib/actions';
   import { sendWebPush, showSystemNotification, workerReady } from '$lib/notifications';
 
   type Toast = { id: number; title: string; message: string; kind: 'success' | 'info' | 'error' };
   type InstallEvent = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }> };
-  type ActionId = 'internal' | 'push' | 'both' | 'system' | 'theme' | 'install' | 'offline' | 'fullscreen';
   let dark = $state(false);
   let online = $state(true);
   let ready = $state(false);
@@ -19,18 +20,31 @@
   let toasts = $state<Toast[]>([]);
   let panel: HTMLDialogElement;
   let dock: HTMLElement;
+  let testSheet: HTMLDialogElement;
+  let sheetOpen = $state(false);
+  let reduceMotion = $state(false);
   let toastId = 0;
   const timers = new Set<ReturnType<typeof setTimeout>>();
-  const actions: { id: ActionId; icon: IconName; label: string; shortcut: string }[] = [
-    { id: 'internal', icon: 'toast', label: 'Notificação interna', shortcut: '01' },
-    { id: 'push', icon: 'bell', label: 'Notificação externa · Web Push', shortcut: '02' },
-    { id: 'both', icon: 'layers', label: 'Notificação interna + externa', shortcut: '03' },
-    { id: 'system', icon: 'monitor', label: 'Notificação local do sistema', shortcut: '04' },
-    { id: 'theme', icon: 'sun', label: 'Alternar tema', shortcut: '05' },
-    { id: 'install', icon: 'download', label: 'Instalar aplicativo', shortcut: '06' },
-    { id: 'offline', icon: 'wifi', label: 'Testar modo offline', shortcut: '07' },
-    { id: 'fullscreen', icon: 'expand', label: 'Alternar tela cheia', shortcut: '08' }
-  ];
+
+  function explore() {
+    if (dock && getComputedStyle(dock).display !== 'none') {
+      dock.querySelector<HTMLButtonElement>('button')?.focus();
+    } else {
+      sheetOpen = true;
+      testSheet.showModal();
+    }
+  }
+
+  function chooseTest(id: ActionId) {
+    testSheet.close();
+    sheetOpen = false;
+    void run(id);
+  }
+
+  function goHome() {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'instant' : 'smooth' });
+    document.getElementById('page-title')?.focus({ preventScroll: true });
+  }
 
   function notify(title: string, message: string, kind: Toast['kind'] = 'success') {
     const id = ++toastId;
@@ -104,6 +118,14 @@
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#111116' : '#ffffff');
     online = navigator.onLine;
     installed = matchMedia('(display-mode: standalone)').matches;
+    const motionQuery = matchMedia('(prefers-reduced-motion: reduce)');
+    reduceMotion = motionQuery.matches;
+    const motionChanged = () => { reduceMotion = motionQuery.matches; };
+    motionQuery.addEventListener('change', motionChanged);
+    const lockScroll = () => { document.body.classList.toggle('modal-open', panel.open || testSheet.open); };
+    const modalObserver = new MutationObserver(lockScroll);
+    modalObserver.observe(panel, { attributes: true, attributeFilter: ['open'] });
+    modalObserver.observe(testSheet, { attributes: true, attributeFilter: ['open'] });
     const connectivity = () => {
       online = navigator.onLine;
       notify(online ? 'Conexão restabelecida' : 'Você está offline', online ? 'Os testes de rede estão disponíveis novamente.' : 'A página continua funcionando pelo cache. Web Push requer conexão.', 'info');
@@ -118,6 +140,9 @@
     window.addEventListener('appinstalled', appInstalled);
     return () => {
       alive = false;
+      modalObserver.disconnect();
+      document.body.classList.remove('modal-open');
+      motionQuery.removeEventListener('change', motionChanged);
       timers.forEach(clearTimeout);
       window.removeEventListener('online', connectivity);
       window.removeEventListener('offline', connectivity);
@@ -137,15 +162,23 @@
   <header class="header">
     <a class="brand" href={`${base}/`} aria-label="Orbit — página inicial"><Icon name="orbit" size={30} /><span>orbit</span></a>
     <span class="stack-label">SvelteKit <span class="stack-plus">+</span> TypeScript</span>
+    <span class="header-connection"><span class="status-dot" class:is-offline={!online}></span>{online ? 'Online' : 'Offline'}</span>
   </header>
 
   <main id="main" class="playground">
     <section class="welcome" aria-labelledby="page-title">
       <div class="planet"><Icon name="orbit" size={50} /></div>
-      <h1 id="page-title">pagina inicial</h1>
-      <p>Um espaço para experimentar o que a web pode fazer.<br class="desktop-break" /> Passe o mouse pelos ícones à direita e escolha um teste.</p>
-      <button class="explore-button" onclick={() => dock?.querySelector<HTMLButtonElement>('button')?.focus()}><Icon name="play" size={20} /><span>Explorar testes</span><Icon name="arrow" size={17} /></button>
+      <h1 id="page-title" tabindex="-1">pagina inicial</h1>
+      <p>Um espaço para experimentar o que a web pode fazer.<span class="desktop-instructions"><br />Passe o mouse pelos ícones à direita e escolha um teste.</span></p>
+      <button class="explore-button" onclick={explore}><Icon name="play" size={20} /><span>Explorar testes</span><Icon name="arrow" size={17} /></button>
       <div class="welcome-status"><span class="status-dot"></span>Pronto para experimentar</div>
+    </section>
+
+    <section class="quick-start" aria-labelledby="quick-title">
+      <h2 id="quick-title">Comece por aqui</h2>
+      <button class="test-row" onclick={() => run('internal')}><span class="row-icon"><Icon name="toast" /></span><span class="row-copy"><strong>Uma notificação de boas-vindas</strong><span>Veja uma mensagem dentro do app.</span></span><Icon name="chevron" size={18} /></button>
+      <button class="test-row" onclick={() => run('offline')}><span class="row-icon"><Icon name="wifi" /></span><span class="row-copy"><strong>Pronto para ficar offline</strong><span>Confira o cache deste dispositivo.</span></span><Icon name="chevron" size={18} /></button>
+      <button class="test-row" onclick={() => run('install')}><span class="row-icon"><Icon name="download" /></span><span class="row-copy"><strong>Leve o Orbit com você</strong><span>Adicione à sua tela inicial.</span></span><Icon name="chevron" size={18} /></button>
     </section>
 
     <nav bind:this={dock} class="test-dock" aria-label="Testes da plataforma">
@@ -173,11 +206,23 @@
     <span class="footer-message">Feito para explorar. Construído com padrões abertos.</span>
     <span class="pwa-status" title={ready ? 'Service worker ativo e cache offline preparado' : 'O service worker é ativado no build de produção'}>{installed ? 'PWA instalado' : ready ? 'PWA pronto' : 'PWA · preparando'}</span>
   </footer>
+  <nav class="mobile-nav" aria-label="Navegação do aplicativo">
+    <button class:nav-active={!sheetOpen} aria-current={!sheetOpen ? 'page' : undefined} onclick={goHome}><Icon name="home" /><span>Início</span></button>
+    <button class:nav-active={sheetOpen} aria-haspopup="dialog" aria-expanded={sheetOpen} aria-controls="test-sheet" onclick={explore}><Icon name="sliders" /><span>Testes</span></button>
+    <button aria-label={dark ? 'Ativar tema claro' : 'Ativar tema escuro'} aria-pressed={dark} onclick={() => run('theme')}><Icon name={dark ? 'moon' : 'sun'} /><span>Tema</span></button>
+    <button aria-label="Instalar Orbit" onclick={() => run('install')}><Icon name="download" /><span>Instalar</span></button>
+  </nav>
 </div>
+
+<dialog id="test-sheet" bind:this={testSheet} class="test-sheet" aria-labelledby="tests-title" onclose={() => sheetOpen = false}>
+  <div class="sheet-handle" aria-hidden="true"></div>
+  <div class="sheet-heading"><div><h2 id="tests-title">Escolha um teste</h2><p>Explore os recursos do seu navegador.</p></div><button class="icon-button" onclick={() => testSheet.close()} aria-label="Fechar testes"><Icon name="close" /></button></div>
+  <TestList {dark} {busy} onselect={chooseTest} />
+</dialog>
 
 <div class="toast-region" aria-live="polite" aria-relevant="additions" aria-atomic="false">
   {#each toasts as toast (toast.id)}
-    <div class="toast" class:toast-error={toast.kind === 'error'} role="status" transition:fly={{ y: 16, duration: 180 }}>
+    <div class="toast" class:toast-error={toast.kind === 'error'} role="status" transition:fly={{ y: reduceMotion ? 0 : 16, duration: reduceMotion ? 0 : 180 }}>
       <span class="toast-symbol"><Icon name={toast.kind === 'success' ? 'check' : 'info'} size={19} /></span>
       <div class="toast-copy"><strong>{toast.title}</strong><p>{toast.message}</p></div>
       <button class="icon-button toast-close" onclick={() => dismiss(toast.id)} aria-label="Fechar notificação"><Icon name="close" size={17} /></button>

@@ -1,9 +1,21 @@
 # Orbit — laboratório web
 
-**Endereço previsto após publicação:** https://adeirjunior.github.io/orbit-web-lab/  
-**Repositório previsto:** https://github.com/adeirjunior/orbit-web-lab
+**Site:** https://adeirjunior.github.io/orbit-web-lab/
 
-Site de teste em **SvelteKit 2 + Svelte 5 (runes) + TypeScript + Vite + PWA**. A página inicial exibe `pagina inicial` e um menu vertical flutuante à direita. Os botões são círculos com ícones e se expandem ao passar o mouse ou receber foco pelo teclado. No toque, o botão executa o teste diretamente.
+**Repositório:** https://github.com/adeirjunior/orbit-web-lab
+
+Webapp de teste em **SvelteKit 2 + Svelte 5 (runes) + TypeScript + Vite + PWA**. A página inicial exibe `pagina inicial`. Em desktop, há um menu vertical flutuante à direita com círculos que se expandem ao passar o mouse ou receber foco pelo teclado. Em celular, tablet, dispositivos de toque e janelas baixas, a navegação muda para uma barra inferior com Início, Testes, Tema e Instalar. O painel de testes apresenta as oito ações com ícones, nomes e descrições, sem depender de hover.
+
+## Interface responsiva
+
+- Conteúdo com largura fluida, rolagem em telas pequenas e áreas de toque de pelo menos 44 px na navegação.
+- Atalhos iniciais para notificações internas, teste offline e instalação.
+- Painéis com rolagem própria e botão de fechar visível; fundo bloqueado enquanto um diálogo está aberto.
+- Barra inferior e notificações respeitam as áreas de segurança do dispositivo; os avisos aparecem acima da navegação.
+- Layout compacto em até 1024 px, em telas com toque ou sem hover e em janelas com altura inferior a 640 px. O modo desktop mantém os botões circulares.
+- Modo instalado com `viewport-fit=cover`, suporte à tela inicial e respeito à preferência por movimento reduzido.
+
+Os testes de layout verificam 320×568, 390×844, 768×1024, 844×390, 1280×800 e 1536×960, além dos fluxos desktop/mobile de notificações, tema persistente e offline.
 
 ## Executar o site completo
 

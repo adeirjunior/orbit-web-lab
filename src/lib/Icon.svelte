@@ -1,9 +1,12 @@
 <script module lang="ts">
-  export type IconName = 'orbit' | 'toast' | 'bell' | 'layers' | 'sun' | 'moon' | 'download' | 'wifi' | 'expand' | 'play' | 'close' | 'check' | 'info' | 'arrow' | 'monitor';
+  export type IconName = 'orbit' | 'toast' | 'bell' | 'layers' | 'sun' | 'moon' | 'download' | 'wifi' | 'expand' | 'play' | 'close' | 'check' | 'info' | 'arrow' | 'monitor' | 'home' | 'sliders' | 'chevron';
 </script>
 <script lang="ts">
   let { name, size = 22 }: { name: IconName; size?: number } = $props();
   const paths: Record<string, string> = {
+    home: 'm3 10 9-7 9 7 M5 9v12h5v-7h4v7h5V9',
+    sliders: 'M3 6h4 M11 6h10 M3 12h10 M17 12h4 M3 18h4 M11 18h10 M7 4h4v4H7z M13 10h4v4h-4z M7 16h4v4H7z',
+    chevron: 'm9 5 7 7-7 7',
     toast: 'M4 4h16v16H4z M4 9h16 M8 13h5 M8 16h3',
     bell: 'M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9 M10 21h4',
     layers: 'm12 3 10 6-10 6L2 9z M2 13l10 6 10-6 M2 17l10 6 10-6',
