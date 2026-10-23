@@ -14,6 +14,9 @@
 - [x] Teste com endpoint FCM fictício: HTTP 410, sem atingir um dispositivo real.
 - [x] GitHub Pages desativado: `has_pages: false`.
 - [x] Workflow Pages removido e endereço público do repositório atualizado.
+- [x] Validação Linux no GitHub Actions aprovada: [execução 40034166251](https://github.com/adeirjunior/orbit-web-lab/actions/runs/40034166251).
+- [x] GitHub App limitado ao repositório `adeirjunior/orbit-web-lab`.
+- [x] Workers Builds conectado à branch `main`: build `npm run cloudflare:build`, deploy `npx wrangler deploy`, raiz `/`, previews desativados e token `orbit-web-lab-builds` aprovado pelo proprietário.
 
 ## Correções necessárias
 
@@ -33,6 +36,6 @@ npm run cloudflare:deploy
 
 Os secrets existentes são preservados pelos deploys. Não regenere as chaves VAPID: isso invalida assinaturas existentes. `.push-keys.json` e `.dev.vars` são privados e ignorados pelo Git.
 
-O GitHub Actions valida o código. A conexão de Workers Builds para publicação automática ainda depende de concluir a associação GitHub no painel; a publicação de produção foi feita pelo Wrangler. Não há campanhas ou agendamento de notificações: o servidor implementa os testes de envio previstos pelo projeto e não armazena assinaturas.
+O GitHub Actions valida o código. Workers Builds publica automaticamente commits em `main` na conta pessoal; os secrets VAPID de runtime são preservados e não ficam no processo de build. O primeiro deploy foi feito pelo Wrangler. Não há campanhas ou agendamento de notificações: o servidor implementa os testes de envio previstos pelo projeto e não armazena assinaturas.
 
 Evidências locais ignoradas pelo Git: `.wrangler/validation/e2e.log` e `.wrangler/validation/production.json` (extrato sem cabeçalhos ou assinaturas de dispositivos).

@@ -45,6 +45,8 @@ O token, quando utilizado, precisa de permissão de edição de Workers Scripts 
 
 ## Publicar pelo GitHub conectado à Cloudflare
 
+Integração já configurada em produção para `adeirjunior/orbit-web-lab`, branch `main`, raiz `/`, build `npm run cloudflare:build` e deploy `npx wrangler deploy`. O token de build é `orbit-web-lab-builds`, criado com aprovação do proprietário; builds de preview estão desativados. Os secrets VAPID permanecem no runtime do Worker.
+
 1. No painel Cloudflare, abra **Workers & Pages** e crie um Worker importando o repositório GitHub `adeirjunior/orbit-web-lab`.
 2. Escolha o projeto `orbit-web-lab`, a branch de produção `main` e a raiz do repositório como diretório do projeto.
 3. Configure o comando de build como **`npm run cloudflare:build`** e o comando de deploy como **`npx wrangler deploy`**. O build lê `wrangler.jsonc`.
