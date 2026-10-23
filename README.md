@@ -1,10 +1,10 @@
 # Orbit — laboratório web
 
-**Site:** https://adeirjunior.github.io/orbit-web-lab/
+**Site:** https://orbit-web-lab.4adeirj.workers.dev/
 
 **Repositório:** https://github.com/adeirjunior/orbit-web-lab
 
-**Cloudflare:** o projeto está preparado para hospedar o site e o Web Push no mesmo Worker. Consulte [CLOUDFLARE.md](./CLOUDFLARE.md) para executar, configurar secrets e publicar. O endereço atual no Pages é mantido durante a migração.
+**Cloudflare:** site e servidor Web Push publicados no mesmo Worker, na conta pessoal `4adeirj@gmail.com`. Consulte [CLOUDFLARE.md](./CLOUDFLARE.md) para executar, configurar secrets e publicar. O GitHub Pages foi desativado em 23/10/2026.
 
 Webapp de teste em **SvelteKit 2 + Svelte 5 (runes) + TypeScript + Vite + PWA**. A página inicial exibe `pagina inicial`. Em desktop, há um menu vertical flutuante à direita com círculos que se expandem ao passar o mouse ou receber foco pelo teclado. Em celular, tablet, dispositivos de toque e janelas baixas, a navegação muda para uma barra inferior com Início, Testes, Tema e Instalar. O painel de testes apresenta as oito ações com ícones, nomes e descrições, sem depender de hover.
 

@@ -93,7 +93,7 @@ test('criptografa uma mensagem AES128GCM real e assina o JWT VAPID corretamente'
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), { accepted: true });
   assert.equal(captured.url, subscription.endpoint);
-  assert.equal(captured.redirect, 'error');
+  assert.equal(captured.redirect, 'manual');
   assert.equal(captured.headers['content-encoding'], 'aes128gcm');
   assert.equal(captured.body.length, 4096);
   const plaintext = ece.decrypt(Buffer.from(captured.body), { version: 'aes128gcm', privateKey: receiver, authSecret: auth });
@@ -120,9 +120,9 @@ test('limite nativo da Cloudflare impede envio e indica quando tentar novamente'
 });
 
 test('assinaturas expiradas e falhas do provedor têm respostas distintas', async () => {
-  for (const upstream of [404, 410, 500]) {
+  for (const upstream of [302, 307, 404, 410, 500]) {
     const response = await handleRequest(request(), environment(), async () => new Response(null, { status: upstream }));
-    assert.equal(response.status, upstream === 500 ? 502 : 410);
+    assert.equal(response.status, [404, 410].includes(upstream) ? 410 : 502);
   }
   const network = await handleRequest(request(), environment(), async () => { throw new Error('offline'); });
   assert.equal(network.status, 502);

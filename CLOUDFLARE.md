@@ -3,7 +3,7 @@
 O projeto usa **Workers Static Assets** para servir o build estático do SvelteKit e executar a API no mesmo domínio. Não exige servidor Node separado, banco de dados, domínio próprio nem migração de framework.
 
 ```text
-https://orbit-web-lab.<subdomínio-da-conta>.workers.dev/
+https://orbit-web-lab.4adeirj.workers.dev/
   /                          → site SvelteKit e PWA
   /service-worker.js         → cache offline e recebimento de push
   /api/push/public-key       → chave VAPID pública
@@ -11,7 +11,7 @@ https://orbit-web-lab.<subdomínio-da-conta>.workers.dev/
   /healthz                  → status do Worker
 ```
 
-O endereço definitivo depende da conta Cloudflare. O site atual no GitHub Pages é preservado até concluir a publicação na Cloudflare.
+Publicado na conta pessoal `4adeirj@gmail.com` em 23/10/2026. O `account_id` em `wrangler.jsonc` fixa a conta de destino e evita publicar nas contas de outras empresas. O GitHub Pages foi desativado e seu workflow removido. A cópia local fica em `C:\Users\adeir\Projects\orbit-web-lab`.
 
 ## O que já está preparado
 
@@ -82,6 +82,6 @@ As assinaturas são enviadas pelo navegador a cada teste e não são persistidas
 
 ## Arquivos preservados para outras hospedagens
 
-`server/index.mjs` continua disponível como alternativa para Render, Cloud Run ou desenvolvimento Node. Ele não é utilizado no deploy Cloudflare. O workflow de GitHub Pages mantém o endereço atual funcionando durante a migração. Depois que o Worker estiver publicado e validado, esse deploy secundário pode ser desativado.
+`server/index.mjs` continua disponível como alternativa para Render, Cloud Run ou desenvolvimento Node. Ele não é utilizado no deploy Cloudflare. A hospedagem ativa é o Worker; o workflow de GitHub Pages foi removido para impedir republicações acidentais.
 
 Referências: [Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/), [Rate Limiting](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/), [Secrets](https://developers.cloudflare.com/workers/configuration/secrets/).

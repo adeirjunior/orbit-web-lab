@@ -123,12 +123,18 @@ export async function handleRequest(request: Request, env: Env, send: typeof fet
       return json(400, { error: 'Não foi possível usar esta assinatura. Revogue a permissão e tente novamente.' });
     }
     try {
-      const response = await send(subscription.endpoint, { ...payload, redirect: 'error', signal: AbortSignal.timeout(10000) });
+      // Workers não aceita redirect: 'error'. Não siga redirecionamentos para
+      // impedir que um serviço repasse a mensagem para um host não autorizado.
+      const response = await send(subscription.endpoint, { ...payload, redirect: 'manual', signal: AbortSignal.timeout(10000) });
       await response.body?.cancel();
       if (response.status === 404 || response.status === 410) return json(410, { error: 'Assinatura expirada. Revogue a permissão e tente novamente.' });
       if (!response.ok) return json(502, { error: 'O serviço de push recusou a mensagem. Confira as permissões e as chaves VAPID.' });
       return json(200, { accepted: true });
-    } catch {
+    } catch (error) {
+      // Não registre a assinatura, o endpoint ou as chaves do dispositivo.
+      console.error('Falha no transporte Web Push.', error instanceof Error
+        ? `${error.name}: ${error.message.replace(/https?:\/\/\S+/g, '[endpoint]')}`
+        : 'UnknownError');
       return json(502, { error: 'Não foi possível alcançar o serviço de push. Tente novamente.' });
     }
   } catch (error) {

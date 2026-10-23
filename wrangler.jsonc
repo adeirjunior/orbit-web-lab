@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "orbit-web-lab",
+  "account_id": "ec47fbd648de7bf0caf418c580deeeaa",
   "main": "cloudflare/worker.ts",
   "compatibility_date": "2026-10-23",
   "workers_dev": true,
@@ -12,7 +13,7 @@
     "not_found_handling": "404-page"
   },
   "vars": {
-    "VAPID_SUBJECT": "https://github.com/adeirjunior/orbit-web-lab"
+    "VAPID_SUBJECT": "mailto:4adeirj@gmail.com"
   },
   "ratelimits": [
     {
