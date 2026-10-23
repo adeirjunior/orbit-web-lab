@@ -1,0 +1,4 @@
+# Somente desenvolvimento local com Wrangler. Nunca publique .dev.vars.
+# npm run cloudflare:local-keys prepara .dev.vars usando as chaves locais existentes.
+VAPID_PUBLIC_KEY=
+VAPID_PRIVATE_KEY=

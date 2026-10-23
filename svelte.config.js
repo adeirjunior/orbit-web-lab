@@ -4,6 +4,6 @@ export default {
   kit: {
     paths: { base: process.env.BASE_PATH || '' },
     adapter: adapter({ pages: 'build', assets: 'build', strict: true }),
-    serviceWorker: { register: true }
+    serviceWorker: { register: true, files: (file) => !file.startsWith('_') }
   }
 };

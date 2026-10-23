@@ -3,7 +3,9 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "dev:push": "node --watch server/index.mjs",
@@ -11,22 +13,32 @@
     "preview": "vite preview --host 0.0.0.0",
     "start": "node server/index.mjs",
     "push:keys": "node scripts/generate-keys.mjs",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json && tsc -p tsconfig.worker.json",
     "test": "node --test tests/*.test.mjs",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "cloudflare:build": "node scripts/build-cloudflare.mjs",
+    "cloudflare:dev": "wrangler dev --ip 0.0.0.0 --port 8787",
+    "cloudflare:dry-run": "npm run cloudflare:build && wrangler deploy --dry-run --outdir /tmp/orbit-worker-dry-run",
+    "cloudflare:deploy": "npm run cloudflare:build && wrangler deploy",
+    "cloudflare:local-keys": "node scripts/cloudflare-secrets.mjs --local",
+    "cloudflare:secrets": "node scripts/cloudflare-secrets.mjs"
   },
   "dependencies": {
+    "@block65/webcrypto-web-push": "^2.0.0",
     "web-push": "^3.6.7"
   },
   "devDependencies": {
-    "@types/node": "^22.19.0",
+    "@cloudflare/workers-types": "^5.20261023.1",
     "@playwright/test": "^1.56.0",
     "@sveltejs/adapter-static": "^3.0.9",
     "@sveltejs/kit": "^2.48.0",
     "@sveltejs/vite-plugin-svelte": "^6.2.1",
+    "@types/node": "^22.19.0",
+    "http_ece": "^1.2.1",
     "svelte": "^5.43.0",
     "svelte-check": "^4.3.3",
     "typescript": "^5.9.3",
-    "vite": "^7.1.12"
+    "vite": "^7.1.12",
+    "wrangler": "^4.152.0"
   }
 }
